@@ -1,0 +1,26 @@
+---
+description: USE WHEN writing asynchronous Swift code, handling UI updates, or managing shared state to prevent data races and threading crashes.
+globs: "**/*.swift"
+alwaysApply: true
+---
+
+# Rule: Modern Swift Concurrency & Safety
+You must adhere to Swift 6+ strict concurrency standards. Prioritize compile-time safety and structured concurrency over legacy GCD patterns.
+
+## 1. UI Safety (MainActor)
+- **Mandatory @MainActor:** Every class or function that updates SwiftUI views or interacts with UIKit/AppKit components MUST be marked with `@MainActor`.
+- **No Legacy Dispatch:** Never suggest `DispatchQueue.main.async`. Use `await` or `MainActor.run { }` for immediate main-thread hops.
+- **Observable Pattern:** Prefer the `@Observable` macro for state management (iOS 17+). Avoid `ObservableObject` and `@Published` in new code.
+
+## 2. Structured Concurrency
+- **Task Lifecycle:** Prefer the SwiftUI `.task` modifier for view-based async work; it handles automatic cancellation when the view disappears.
+- **Task Groups:** Use `withTaskGroup` or `async let` for parallel operations. Avoid unstructured `Task { }` unless strictly necessary for fire-and-forget logic.
+- **Capture Lists:** When using unstructured `Task` or closures in an async context, always check if `[weak self]` is needed to prevent retain cycles.
+
+## 3. Data Race Prevention
+- **Sendable Compliance:** Ensure all types crossing isolation boundaries conform to `Sendable`. If a type cannot be Sendable, use `@MainActor` or `Actor` isolation to protect it.
+- **Actor Isolation:** Use `actor` for shared mutable state that is accessed from background contexts (e.g., a NetworkManager or Cache).
+- **Avoid @unchecked Sendable:** Never suggest `@unchecked Sendable` as a "quick fix" for compiler warnings. Instead, fix the underlying isolation or move to value types (structs).
+
+## 4. Cancellation & Performance
+- **Cooperative Cancellation:** In long-running loops or streams, frequently check `

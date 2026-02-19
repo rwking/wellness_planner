@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "wellness-planner": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/Users/richking/Code/wellness_planner",
+        "python",
+        "mcp_server/server.py"
+      ]
+    }
+  }
+}

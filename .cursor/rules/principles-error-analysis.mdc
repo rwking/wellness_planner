@@ -1,0 +1,19 @@
+---
+description: USE ALWAYS when a command, test, or build fails to prevent repetitive "guessing" and wasted tokens.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Systematic Error Analysis
+If a task fails, do not immediately attempt a fix. You must process the failure through this sequence.
+
+## 1. The Analysis Sequence
+1. **The Evidence:** State the exact error message or unexpected behavior.
+2. **The Root Cause:** Explain *why* this occurred based on your current understanding of the code. 
+3. **The Proposal:** Propose a specific fix and explain how it addresses the root cause.
+4. **Approval:** Wait for a "go" or "LGTM" if the fix is complex (modifying logic in >1 file).
+
+## 2. No Trial and Error
+- Never repeat the same failed command twice without modifying the environment or code.
+- If you are stuck after 2 failed attempts at a fix, STOP and ask the user for a hint or clarification. 
+- Avoid "shotgun debugging" (changing multiple unrelated things at once to see what sticks).

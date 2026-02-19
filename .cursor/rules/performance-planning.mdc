@@ -1,0 +1,19 @@
+---
+description: Critical performance and token optimization rules for all agent tasks.
+alwaysApply: true
+---
+
+# Token Optimization & Safety Rules
+
+## 1. PRE-ACTION PLANNING (The "Thinking" Guardrail)
+- **THINK BEFORE ACTING:** Before modifying any files, output a brief "Execution Plan."
+- **PLAN APPROVAL:** If the task involves more than 2 files or 100 lines of code, WAIT for user approval before applying changes. This prevents expensive, incorrect large-scale refactors.
+
+## 2. CONTEXT MANAGEMENT
+- **SELECTIVE READING:** Do not read the entire codebase. Use `grep` or `ls` to find specific files.
+- **NEVER AUTO-UPDATE DOCS:** Do not update READMEs, `.md` files, or comments unless explicitly requested. Documenting code costs thousands of unnecessary tokens.
+- **MINIMAL DIFFS:** Aim for the smallest possible code change. Do not rewrite entire functions if a one-line change suffices.
+
+## 3. RESPONSE GUIDELINES
+- **BE CONCISE:** Do not explain things I already know. Skip the "Certainly! Here is your code..." pleasantries.
+- **NO CHATTER:** Use a professional, "Senior Engineer" tone focused only on technical execution.

@@ -11,7 +11,12 @@ wheels/
 
 # Health database (generated)
 data/health.db
+data/insights.json
+
+# Generated charts
+data/charts/
 # .cursor/
 .cursorignore
 AGENTS.md
 BUGBOT.md
+data/insights.json

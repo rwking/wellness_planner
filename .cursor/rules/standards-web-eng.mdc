@@ -1,0 +1,21 @@
+---
+description: Mandatory coding standards for all Web/Vue files.
+globs: "**/*.{vue,ts,js}"
+alwaysApply: true
+---
+
+# Web & Vue Coding Standards
+- **Naming:** 
+  - Components: `PascalCase` (e.g., `UserProfile.vue`).
+  - Props/Events: `camelCase` in JS, `kebab-case` in HTML templates.
+  - Files: `PascalCase` for components, `camelCase` for utilities/composables.
+- **Component Structure:**
+  - Order: `<script setup>`, `<template>`, `<style scoped>`.
+  - Script Order: Imports -> Props/Emits -> Refs/State -> Computed -> Watchers -> Lifecycle Hooks -> Methods.
+- **Type Safety:** 
+  - Strictly use TypeScript interfaces/types for all Props and API responses. 
+  - Avoid `any`; use `unknown` if the type is truly dynamic, then narrow it.
+- **Styling:** 
+  - Use `scoped` styles or CSS Modules. 
+  - Prefer Vuetify utility classes (e.g., `class="d-flex align-center"`) over custom CSS for layout.
+- **Linting:** Ensure code passes ESLint (with Vue plugin) and Prettier formatting rules.

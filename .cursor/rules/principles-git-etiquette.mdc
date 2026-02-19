@@ -1,0 +1,26 @@
+---
+description: USE ALWAYS when performing git operations to maintain a clean, professional commit history.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Git & Commit Etiquette
+Maintain the project's history as carefully as its code.
+
+## 1. Contextual Awareness
+- Always run `git status` before starting a task to ensure a clean slate.
+- Run `git status` after your changes to see exactly what files were modified.
+
+## 2. Conventional Commits
+- Suggest commit messages following the **Conventional Commits** standard:
+    - `feat:` for new features.
+    - `fix:` for bug fixes.
+    - `docs:` for documentation changes.
+    - `refactor:` for code changes that neither fix a bug nor add a feature.
+    - `chore:` for updating build tasks, package manager configs, etc.
+
+## 3. Communication
+- After finishing a task, do not just say "I'm done." 
+- Instead, provide the suggested `git` commands for the user to review and run:
+    - Example: "Task complete. You can commit these changes with: `git add . && git commit -m 'feat: add user authentication'`"
+- **NEVER** use `git push` unless explicitly commanded.

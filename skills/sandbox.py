@@ -19,6 +19,8 @@ from pathlib import Path
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "health.db"
 TIMEOUT_SECONDS = 30
 MAX_OUTPUT_CHARS = 4000
+HEAD_CHARS = 2500   # chars shown from the top when truncating
+TAIL_CHARS = 800    # chars shown from the bottom when truncating
 
 
 def run_python_analysis(script: str) -> dict:
@@ -66,14 +68,29 @@ def run_python_analysis(script: str) -> dict:
         )
 
         raw_output = result.stdout.strip()
-        truncated = len(raw_output) > MAX_OUTPUT_CHARS
-        output = raw_output[:MAX_OUTPUT_CHARS] + ("\n... [truncated]" if truncated else "")
+        total_lines = raw_output.count("\n") + 1 if raw_output else 0
+        total_chars = len(raw_output)
+        truncated = total_chars > MAX_OUTPUT_CHARS
+
+        if truncated:
+            head = raw_output[:HEAD_CHARS]
+            tail = raw_output[-TAIL_CHARS:]
+            omitted_chars = total_chars - HEAD_CHARS - TAIL_CHARS
+            output = (
+                f"{head}\n\n"
+                f"... [{omitted_chars:,} characters omitted — {total_lines} lines total] ...\n\n"
+                f"{tail}"
+            )
+        else:
+            output = raw_output
 
         return {
             "output": output,
             "error": result.stderr.strip() or None,
             "exit_code": result.returncode,
             "truncated": truncated,
+            "total_lines": total_lines,
+            "total_chars": total_chars,
         }
 
     except subprocess.TimeoutExpired:
@@ -82,6 +99,8 @@ def run_python_analysis(script: str) -> dict:
             "error": f"Script timed out after {TIMEOUT_SECONDS} seconds.",
             "exit_code": -1,
             "truncated": False,
+            "total_lines": 0,
+            "total_chars": 0,
         }
     finally:
         if script_path and script_path.exists():

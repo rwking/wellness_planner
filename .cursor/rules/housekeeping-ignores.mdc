@@ -1,0 +1,20 @@
+---
+description: USE WHEN creating new directories, adding large datasets, or generating build artifacts to ensure ignore files are updated.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Ignore File Maintenance
+You are responsible for keeping the project's context clean and token-efficient.
+
+## Critical Instructions
+1. **Monitor New Directories:** Whenever a new directory is created, assess if it contains:
+   - Large datasets (CSV, Parquet, JSONL).
+   - Build artifacts or temporary logs.
+   - Third-party library code.
+2. **Proactive Prompting:** If a new directory matches the above criteria, you **MUST** pause and ask the user:
+   > "I noticed a new directory `{folder_name}`. Should I add this to `.cursorignore` and `.geminiignore` to prevent unnecessary token usage?"
+3. **Sync Requirement:** If the user agrees, you must update BOTH `.cursorignore` and `.geminiignore` in the project root to keep them in sync.
+
+## Verification
+- Before finishing any task involving file structure changes, check if the project's "Firewall" (ignores) needs an update.

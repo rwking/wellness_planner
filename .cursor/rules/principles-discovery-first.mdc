@@ -1,0 +1,23 @@
+---
+description: USE ALWAYS to prevent code duplication and ensure the agent utilizes existing project patterns before writing new logic.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Discovery-First Implementation
+Never write new code without first understanding the existing environment. You must act as an archeologist before you act as a builder.
+
+## 1. The Discovery Sequence
+Before generating any new function, class, or module:
+1. **Grep/Search:** Use `codebase_search` to look for existing implementations of the logic.
+2. **Test-First Discovery:** Before modifying any logic, locate and read the corresponding test file. Tests are the most accurate documentation of intended behavior.
+3. **Pattern Matching:** Identify the naming conventions and architectural patterns already present in the project (e.g., if we use `services/`, don't create `logic/`).
+4. **Reuse over Rewrite:** If a utility exists that covers 80% of the requirement, suggest extending it rather than creating a new one.
+
+## 2. Minimal Diffs
+- Strive for the **smallest possible code change**. 
+- Avoid refactoring unrelated code unless explicitly asked.
+- Every extra line of code is a "Token Debt" for future sessions.
+
+## 3. Reference Canon
+- If you find a "Golden Example" in the codebase (a perfectly written file), use it as the template for your new code and explicitly tell the user: "Following the pattern found in `path/to/file.py`..."

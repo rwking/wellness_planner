@@ -1,0 +1,12 @@
+---
+description: Mandatory coding standards for all Swift files.
+globs: "**/*.swift"
+alwaysApply: true
+---
+
+# Swift Coding Standards
+- **Naming:** Use `camelCase` for variables/functions and `PascalCase` for types.
+- **Access Control:** Default to `private` for state and helper functions.
+- **Views:** Keep SwiftUI View bodies under 30 lines; extract subviews for clarity.
+- **Formatting:** Ensure ternary operators have spaces (e.g., `a ? b : c`) to avoid compiler errors.
+- **Imports:** Group and alphabetize imports; separate internal modules from system frameworks.
