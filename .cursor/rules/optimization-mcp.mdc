@@ -1,0 +1,22 @@
+---
+description: Optimization rules for MCP Server development to ensure fast, responsive tools for LLMs.
+globs: "**/mcp-server/**, **/src/mcp/**"
+---
+
+# MCP Performance & Optimization
+
+## 1. PAYLOAD MANAGEMENT (Token Saver)
+- **TRUNCATION:** Always truncate large text outputs from tools (e.g., > 1000 lines or > 50KB). Provide a clear message: `[Output truncated. Use 'offset' parameter to read more.]`.
+- **PAGINATION:** Implement `limit` and `offset` parameters for any tool returning lists or large datasets (files, database rows).
+- **FILTERING:** Encourage tools to accept filter parameters (e.g., `glob_pattern`, `search_term`) to reduce data transfer.
+
+## 2. LATENCY & CONCURRENCY
+- **ASYNC FIRST:** All I/O operations (file reads, API calls) MUST be asynchronous (`async/await`) to keep the server responsive to multiple tool calls.
+- **PARALLELISM:** Use `Promise.all` (JS) or `asyncio.gather` (Python) when a tool needs to fetch data from multiple sources.
+
+## 3. RESOURCE EFFICIENCY
+- **CACHING:** Cache expensive resource reads or external API responses (e.g., specific file contents, query results) with a short TTL if frequently accessed.
+- **CONNECTION POOLING:** Reuse database or API client connections across tool invocations rather than creating new ones per request.
+
+## 4. NOTIFICATIONS
+- **SPARSE UPDATES:** Use resource update notifications sparingly. Only notify when critical data changes to avoid flooding the client and triggering excessive re-reads.

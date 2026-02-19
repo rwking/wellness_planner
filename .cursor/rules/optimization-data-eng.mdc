@@ -1,0 +1,21 @@
+---
+description: Optimization for Data Engineering tasks (Python & SQL).
+globs: "**/*.py, **/*.sql, **/pipelines/*.py"
+---
+
+# Data Engineering Performance Rules
+
+## 1. SCHEMA AWARENESS (Token Saver)
+- **SCHEMA-ONLY:** Do not read raw data files (.csv, .json, .parquet) unless explicitly asked to sample them. Only read schema definitions or DDL files.
+- **METADATA FIRST:** If I ask about a table, check `@docs/schema.md` or the DDL files first. Do not run `SELECT *` or "Describe" commands across the whole DB.
+
+## 2. PYTHON PIPELINE EFFICIENCY
+- **MODULARITY:** When editing a pipeline, only read the specific transform/task being changed. Do not load the entire orchestration (Airflow/Dagster) context.
+- **TYPE HINTING:** Always use Python type hints for DataFrames (e.g., `pd.DataFrame` or `polars.DataFrame`) to avoid the AI guessing schema types.
+
+## 3. SQL GENERATION 
+- **DIALECT LOCK:** Always assume [INSERT YOUR DIALECT, e.g., Snowflake/Postgres/BigQuery] syntax. Do not provide "generic" SQL which leads to expensive re-writes.
+- **CTE PREFERENCE:** Use Common Table Expressions (CTEs) for readability to reduce the need for the AI to "explain" complex nested subqueries.
+
+## 4. COST PROTECTION
+- **PREVENT LARGE SCANS:** If a suggested Python script or SQL query looks like it will trigger a full table scan on a large dataset, WARN me before providing the code.

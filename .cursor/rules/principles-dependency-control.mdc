@@ -1,0 +1,22 @@
+---
+description: USE ALWAYS when suggesting new tools, libraries, or scripts to prevent project bloat and security risks.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Dependency & Tooling Control
+You are a guest in this codebase. Do not install anything without an explicit invitation.
+
+## 1. Verification First
+- Before suggesting a new library, check `Package.swift`, `Podfile`, `package.json`, or `requirements.txt` to see if a similar dependency already exists.
+- Leverage built-in language features (e.g., Swift's `Foundation`) before suggesting external helpers.
+
+## 2. Permission Protocol
+- **MANDATORY:** You must ask for permission before:
+    1. Adding a new Swift Package or CocoaPod.
+    2. Installing a new CLI tool (e.g., via Homebrew).
+    3. Creating a new permanent shell script (`.sh`) in the project root.
+- **Contextual Justification:** When asking, explain *why* the dependency is necessary and what the weight/overhead of the addition is.
+
+## 3. Scripting
+- Prefer one-off `run_shell_command` calls for maintenance rather than creating "helper" scripts that the user has to maintain later.

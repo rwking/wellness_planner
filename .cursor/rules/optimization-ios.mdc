@@ -1,0 +1,24 @@
+---
+description: Optimization for iOS/SwiftUI development. Prevents non-idiomatic Swift and reduces expensive build-fix loops.
+globs: "**/*.swift, **/*.plist"
+---
+
+# iOS & SwiftUI Performance Rules
+
+## 1. MODERN SWIFTUI STANDARDS (Token Saver)
+- **OBSERVABLE MACRO:** Always use the `@Observable` macro for ViewModels (iOS 17+). Do not use the deprecated `ObservableObject` or `@Published` unless explicitly targeting older versions.
+- **STATE MANAGEMENT:** Use `@State` only for local view-private state. Pass dependencies via initializers; avoid excessive use of `@EnvironmentObject`.
+- **PREVIEWS:** Keep SwiftUI Previews minimal. Do not let the agent generate massive mock data structures inside the View file; refer to a `@MockData.swift` file instead.
+
+## 2. CONCURRENCY & PERFORMANCE
+- **MAIN ACTOR:** Annotate all UI-updating functions with `@MainActor`. 
+- **SWIFT CONCURRENCY:** Use `Task` and `async/await` over `DispatchQueue.main.async`. 
+- **LAZY VIEWS:** Force the use of `LazyVStack` or `LazyHStack` for any list-like structure exceeding 20 items to prevent memory bloat during agent testing.
+
+## 3. ASSET & RESOURCE HANDLING
+- **SF SYMBOLS:** Always prefer SF Symbols over custom icons unless specified. Do not let the agent write code to "find" icons; suggest `@SF Symbols` first.
+- **NO DATA PEEKING:** Do not read large `.xcassets` or binary files. Only reference them by name.
+
+## 4. BUILD-ERROR MITIGATION
+- **PLANNING:** If the change involves `Info.plist` or Project Settings, STOP and ask. AI agents often corrupt `.xcodeproj` files.
+- **IDIOMATIC SYNTAX:** Ensure ternary operators have spaces (e.g., `a ? b : c`). AI often misses this, causing Swift compiler errors that waste tokens to fix.

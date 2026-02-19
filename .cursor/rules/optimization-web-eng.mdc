@@ -1,0 +1,25 @@
+---
+description: Optimization for Web/Vue 3 development. Prevents non-performant patterns and reduces build overhead.
+globs: "**/*.{vue,ts,js}"
+---
+
+# Web & Vue 3 Performance Rules
+
+## 1. MODERN VUE STANDARDS (Token Saver)
+- **SCRIPT SETUP:** Always use `<script setup lang="ts">`. It provides better runtime performance and TypeScript inference than the Options API.
+- **REACTIVITY:** Prefer `ref()` for primitives and `reactive()` for objects. Use `shallowRef()` for large data structures that don't need deep reactivity to save memory.
+- **COMPUTED PROPERTIES:** Use `computed(() => ...)` for derived state. Avoid complex logic in templates or watchers that can be computed.
+
+## 2. COMPONENT & ROUTE OPTIMIZATION
+- **ASYNC COMPONENTS:** Use `defineAsyncComponent` for heavy components (e.g., complex dialogs, charts) to split chunks.
+- **LAZY LOADING:** Always lazy-load routes in the router configuration (`component: () => import('./views/Home.vue')`).
+- **KEEP-ALIVE:** Wrap expensive views or tab contents in `<KeepAlive>` to preserve state and avoid re-rendering.
+
+## 3. LIST & RENDERING PERFORMANCE
+- **VIRTUAL SCROLLING:** Use `<v-virtual-scroll>` (Vuetify) or similar libraries for lists exceeding 50 items. DOM recycling is mandatory for performance.
+- **KEY ATTRIBUTE:** Always provide a unique, primitive `:key` in `v-for` loops. Avoid using the array index as the key if the list can be reordered or filtered.
+- **V-IF vs V-SHOW:** Use `v-if` to conditionally render heavy components (mounting/unmounting). Use `v-show` for frequent toggling to avoid DOM trashing.
+
+## 4. BUILD & ASSET HANDLING
+- **TREE SHAKING:** Import Vuetify components and directives individually if not using the auto-import plugin, or ensure the build process is configured for tree-shaking.
+- **ASSETS:** Use SVG icons or optimized web formats (WebP) for images. Avoid importing large libraries for single utility functions; use modular imports (e.g., `lodash-es`).

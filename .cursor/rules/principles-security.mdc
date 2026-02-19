@@ -1,0 +1,33 @@
+---
+description: USE ALWAYS to prevent accidental exposure of secrets, credentials, and sensitive data in code or version control.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Security & Secrets Management
+A leaked secret is not a typo — it is an incident. Treat every credential as radioactive.
+
+## 1. Secrets Handling
+- **NEVER** hardcode API keys, tokens, passwords, or connection strings in source files.
+- **Environment Variables:** All secrets must be loaded from environment variables or a `.env` file at runtime.
+- **Configuration Files:** If a config file contains secrets, it MUST be listed in `.gitignore`. Provide a `.env.example` or config template with placeholder values instead.
+- **Logging:** NEVER log secrets, tokens, or full request headers that contain authorization data. Mask or redact sensitive fields in all log output.
+
+## 2. Git Protection
+- **Pre-commit Check:** Before suggesting a commit, scan staged files for patterns that look like secrets (API keys, `Bearer` tokens, `password =`, connection strings, private keys).
+- **If Secrets Are Found:** STOP. Do not commit. Alert the user immediately with the file and line number.
+- **If Secrets Were Already Committed:** Advise the user to:
+    1. Rotate the exposed credential immediately.
+    2. Use `git filter-branch` or `BFG Repo-Cleaner` to purge the secret from history.
+    3. Force-push only after user confirmation and team coordination.
+- **`.gitignore` Baseline:** Ensure the following are always ignored: `.env`, `.env.*` (except `.env.example`), `*.pem`, `*.key`, `credentials.json`, `serviceAccountKey.json`.
+
+## 3. Sensitive Operations
+- **Authentication & Authorization:** Any code handling login, token generation, or permission checks must be flagged for careful review. Do not rush auth logic.
+- **Data Access:** Query code that touches PII (names, emails, addresses, payment info) must use parameterized queries — NEVER string interpolation for SQL.
+- **File Uploads:** Validate file types and sizes server-side. Never trust client-provided MIME types.
+- **Third-Party Integrations:** When adding webhook handlers or OAuth flows, verify callback URLs and validate incoming signatures/tokens.
+
+## 4. Communication
+- If you encounter an existing secret in the codebase, STOP and alert the user: "I found what appears to be a hardcoded secret in `{file}:{line}`. This should be moved to an environment variable and the credential rotated."
+- When creating new integrations that require API keys, proactively set up the `.env` pattern and confirm the `.gitignore` entry exists.

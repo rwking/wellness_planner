@@ -1,0 +1,16 @@
+---
+description: Mandatory standards for Python and SQL data pipelines.
+globs: "**/*.py, **/*.sql"
+alwaysApply: true
+---
+
+# Data Engineering Coding Standards
+## Python
+- **Type Hinting:** Mandatory for all pipeline functions (e.g., `df: pd.DataFrame -> None`).
+- **Docstrings:** Use Google-style docstrings specifically describing the data schema expected.
+- **Logging:** Use structured logging; never use `print()` for pipeline status.
+
+## SQL
+- **Keyword Casing:** Use UPPERCASE for all SQL keywords (SELECT, FROM, JOIN).
+- **Aliases:** Always use explicit table aliases (e.g., `u.user_id` instead of `user_id`).
+- **Joins:** Explicitly state the join type (e.g., `INNER JOIN`) rather than using commas.

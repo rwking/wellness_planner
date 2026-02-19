@@ -22,6 +22,10 @@ from skills.summarizer import (
     summarize_sleep,
     summarize_activity,
 )
+from skills.sandbox import run_python_analysis as _run_python_analysis
+from skills.schema import get_data_dictionary as _get_data_dictionary
+from skills.visualization import generate_chart as _generate_chart
+from skills.memory import save_insight as _save_insight, get_insights as _get_insights
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "health.db"
 TODO_PATH = Path(__file__).resolve().parent.parent / "data" / "todo.json"
@@ -147,6 +151,115 @@ def propose_schedule(target_date: str | None = None) -> dict:
             "evening": evening,
         },
     }
+
+
+@mcp.tool()
+def get_data_dictionary() -> dict:
+    """Return a structured schema summary of the health database.
+
+    Call this before writing any SQL query or run_analysis script to verify
+    column names, data types, and representative sample values. This prevents
+    hallucinated column names and bad JOINs.
+
+    Returns a dict keyed by table name, each containing:
+      - row_count: total rows.
+      - columns: list of {name, type, nullable}.
+      - samples: up to 3 representative rows.
+    """
+    return _get_data_dictionary()
+
+
+@mcp.tool()
+def run_analysis(script: str) -> dict:
+    """Execute a Python analysis script against the health database.
+
+    The script runs in an isolated subprocess. DB_PATH, sqlite3, and pandas
+    are pre-injected — no imports needed. Results must be printed to stdout.
+    Scripts timeout after 30 seconds; output is capped at 4000 characters.
+
+    Available tables:
+    - sleep_logs (date, bedtime, wake_time, total_hours, deep_sleep_hours, rem_sleep_hours, awakenings)
+    - activity_logs (date, steps, active_minutes, calories_burned, workouts)
+    - heart_rate_logs (date, timestamp, bpm)
+
+    Example script:
+        df = pd.read_sql("SELECT date, total_hours FROM sleep_logs ORDER BY date", sqlite3.connect(DB_PATH))
+        print(df.describe().to_string())
+
+    Args:
+        script: Python source code to execute. Print all results to stdout.
+
+    Returns:
+        dict with keys: output (str), error (str|None), exit_code (int), truncated (bool).
+    """
+    return _run_python_analysis(script)
+
+
+@mcp.tool()
+def generate_chart(
+    data: list[dict],
+    title: str,
+    x: str,
+    y: str,
+    mark_type: str = "line",
+    filename: str | None = None,
+) -> dict:
+    """Generate a self-contained Observable Plot HTML chart from tabular data.
+
+    Saves the chart to data/charts/ and returns the file path. Open the path
+    in a browser to view the interactive chart. Raw data is embedded in the
+    HTML — it does not re-enter the chat context.
+
+    Args:
+        data: List of dicts representing the data points (e.g. from run_analysis).
+        title: Chart title displayed as a heading.
+        x: Column name for the x-axis.
+        y: Column name for the y-axis.
+        mark_type: One of "line", "dot", "bar", "area", "boxX". Defaults to "line".
+        filename: Optional output filename. Auto-generated from title + timestamp if omitted.
+
+    Returns:
+        dict with keys: path (str), url (str), rows (int).
+    """
+    return _generate_chart(data=data, title=title, x=x, y=y, mark_type=mark_type, filename=filename)
+
+
+@mcp.tool()
+def get_insights(key: str | None = None) -> list[dict]:
+    """Retrieve previously saved insights from the Fact Store.
+
+    Call this at the START of any analysis session. If a relevant insight
+    already exists, return it directly — do not re-run the analysis.
+
+    Args:
+        key: Optional snake_case key to filter (e.g. "peak_energy_time").
+            If omitted, returns all stored insights newest-first.
+
+    Returns:
+        List of dicts with keys: key, value, source, saved_at.
+        Empty list if no insights are stored.
+    """
+    return _get_insights(key)
+
+
+@mcp.tool()
+def save_insight(key: str, value: str, source: str) -> dict:
+    """Persist a discovered insight to the Fact Store.
+
+    Call this AFTER completing an analysis to record the key finding.
+    Existing insights with the same key are overwritten — one canonical
+    fact per key keeps the store compact.
+
+    Args:
+        key: Short snake_case identifier (e.g. "peak_energy_time",
+            "worst_sleep_trigger", "avg_readiness_last_30d").
+        value: Human-readable finding (e.g. "10 AM", "late workouts", "6.4/10").
+        source: What analysis produced this (e.g. "30-day HR correlation").
+
+    Returns:
+        dict with keys: key, value, source, saved_at, action ("created"|"updated").
+    """
+    return _save_insight(key=key, value=value, source=source)
 
 
 if __name__ == "__main__":

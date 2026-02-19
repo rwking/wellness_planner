@@ -1,0 +1,35 @@
+---
+description: USE ALWAYS when writing new features, fixing bugs, or refactoring to ensure changes are verified and regressions are prevented.
+globs: "**/*"
+alwaysApply: true
+---
+
+# Rule: Testing Standards
+Untested code is unfinished code. Every behavioral change must be provably correct.
+
+## 1. When Tests Are Required
+- **New Features:** Every new public function or endpoint MUST have at least one corresponding test.
+- **Bug Fixes:** Every bug fix MUST include a regression test that reproduces the original failure before verifying the fix.
+- **Refactors:** If you change the internal logic of a function, run existing tests to confirm behavior is preserved. Add tests if coverage is missing.
+- **Deletions:** If you remove code, verify no existing tests break. Remove orphaned tests cleanly.
+
+## 2. Test Quality
+- **Arrange-Act-Assert:** Structure every test case with clear setup, execution, and verification phases.
+- **One Concern Per Test:** Each test should verify a single behavior. Do not chain unrelated assertions.
+- **Descriptive Names:** Test names must describe the scenario and expected outcome (e.g., `test_expired_token_returns_401`, `testFetchUser_WithInvalidID_ThrowsNotFoundError`).
+- **No Logic in Tests:** Tests must not contain conditionals, loops, or complex setup. If setup is complex, extract it into a shared fixture or factory.
+
+## 3. What to Test
+- **Happy Path:** The expected, successful behavior.
+- **Edge Cases:** Empty inputs, nil/null values, boundary conditions, maximum sizes.
+- **Error Paths:** Invalid input, network failures, permission denials, timeouts.
+- **Do NOT Test:** Private implementation details, third-party library internals, or trivial getters/setters.
+
+## 4. Test Organization
+- **Mirror Source Structure:** Test files should mirror the source directory layout (e.g., `Services/AuthService.swift` → `Tests/Services/AuthServiceTests.swift`).
+- **Co-locate or Convention:** Follow whichever pattern already exists in the project. Do not introduce a second convention.
+- **Keep Tests Fast:** Unit tests must not depend on network, filesystem, or database. Mock external dependencies.
+
+## 5. Communication
+- If a task is complete but test coverage is insufficient, flag it: "This change is untested because [reason]. Recommend adding tests for [specific scenarios]."
+- **NEVER** silently skip tests to save tokens. Explicitly state the trade-off and let the user decide.

@@ -1,0 +1,27 @@
+---
+description: Mandatory standards for MCP Server implementation.
+globs: "**/mcp-server/**, **/src/mcp/**"
+alwaysApply: true
+---
+
+# MCP Server Standards
+
+## 1. NAMING CONVENTIONS
+- **TOOLS:** Use `snake_case` (e.g., `list_files`, `get_weather`). Must be a verb phrase.
+- **RESOURCES:** Use URI schemes (e.g., `file://`, `postgres://`) consistent with the resource type.
+- **ARGUMENTS:** Use `camelCase` (JS/TS) or `snake_case` (Python) matching the host language conventions, but document them clearly.
+
+## 2. SCHEMA & DOCUMENTATION
+- **STRICT SCHEMAS:** Every tool MUST have a strict input schema (Zod in TS, Pydantic in Python).
+- **DESCRIPTIONS:** 
+  - **Tool:** Explain the *purpose* and *outcome* (e.g., "Reads file content" -> "Reads the text content of a file at the specified path").
+  - **Argument:** detailed description for each parameter (e.g., "The absolute path to the file to read").
+- **EXAMPLES:** Provide example inputs in the tool description or a separate `examples` field if supported.
+
+## 3. ERROR HANDLING
+- **USER-FACING:** Errors returned to the LLM must be actionable (e.g., "Invalid API Key" vs "500 Server Error").
+- **LOGGING:** Log internal errors to stderr or a file, but do not expose stack traces to the LLM unless necessary for debugging code.
+
+## 4. CODE STRUCTURE
+- **MODULARITY:** Separate tool definitions (`src/tools/`) from resource handlers (`src/resources/`) and the main server setup.
+- **TYPES:** Define shared types for tool inputs/outputs in a dedicated types file.
