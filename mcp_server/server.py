@@ -22,6 +22,7 @@ from skills.summarizer import (
     summarize_sleep,
     summarize_activity,
 )
+from skills.sandbox import run_python_analysis as _run_python_analysis
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "health.db"
 TODO_PATH = Path(__file__).resolve().parent.parent / "data" / "todo.json"
@@ -147,6 +148,32 @@ def propose_schedule(target_date: str | None = None) -> dict:
             "evening": evening,
         },
     }
+
+
+@mcp.tool()
+def run_analysis(script: str) -> dict:
+    """Execute a Python analysis script against the health database.
+
+    The script runs in an isolated subprocess. DB_PATH, sqlite3, and pandas
+    are pre-injected — no imports needed. Results must be printed to stdout.
+    Scripts timeout after 30 seconds; output is capped at 4000 characters.
+
+    Available tables:
+    - sleep_logs (date, bedtime, wake_time, total_hours, deep_sleep_hours, rem_sleep_hours, awakenings)
+    - activity_logs (date, steps, active_minutes, calories_burned, workouts)
+    - heart_rate_logs (date, timestamp, bpm)
+
+    Example script:
+        df = pd.read_sql("SELECT date, total_hours FROM sleep_logs ORDER BY date", sqlite3.connect(DB_PATH))
+        print(df.describe().to_string())
+
+    Args:
+        script: Python source code to execute. Print all results to stdout.
+
+    Returns:
+        dict with keys: output (str), error (str|None), exit_code (int), truncated (bool).
+    """
+    return _run_python_analysis(script)
 
 
 if __name__ == "__main__":

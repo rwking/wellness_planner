@@ -1,34 +1,49 @@
-# The Wellness Planner: Health Data Agent
+# Phase 1: The "Sandbox" Tool (Execution)
 
-Goal: Build a local agent that uses MCP (Model Context Protocol) to query personal health data and provides energy-aware task scheduling.
+The core of an analytical agent is the ability to run code. We will extend your Python MCP server to include a run_analysis tool.
 
-## Phase 1: Environment Setup
-- [ ] Initialize Python environment using `uv`.
-- [ ] Install dependencies: `mcp`, `fastapi`, `uvicorn`, `pandas`, `sqlite3`.
-- [ ] Create directory structure:
-    - `/mcp_server`: Python MCP server.
-    - `/data`: Placeholder for SQLite DB or CSV health exports.
-    - `/skills`: Logic for token optimization and data aggregation.
+## Objectives
 
-## Phase 2: MCP Server Development
-- [ ] Implement `server.py` using the MCP Python SDK.
-- [ ] **Tools to implement:**
-    - `get_health_summary(date: str)`: Aggregates sleep and activity.
-    - `calculate_readiness_score()`: Returns a 1-10 readiness score.
-    - `query_raw_logs(query: str)`: Allows LLM to ask specific questions about data points.
+- Create a run_analysis tool that accepts a Python script as a string.
+- Use a subprocess to execute the code in your local environment.
+- Capture stdout and stderr to return to Gemini.
 
-## Phase 3: Token Optimization (The "Skill" Layer)
-- [ ] Create `summarizer.py` utility.
-- [ ] **Strategy:** Pass min, max, and avg heart rate instead of raw 24-hour data to save tokens and improve reasoning speed.
+## Key Learning
 
-## Phase 4: Cursor & Gemini Integration
-- [ ] Configure Cursor to use the local MCP server via `stdio`.
-- [ ] Set up `.cursorrules` to define Agent persona and tool-calling constraints.
-- [ ] **Test the loop:** "Based on my sleep last night, should I do my 'Deep Work' session now or at 4 PM?"
+You will see how Agentic Loops handle errors. If the script fails, Gemini reads the error, modifies the code, and tries again (Auto-debugging).
 
-## Phase 5: Agentic Features
-- [ ] Implement a "Plan-and-Execute" loop.
-- [ ] **Agent Workflow:**
-    - Check health data.
-    - Check a mock `todo.json`.
-    - Propose a rescheduled calendar.
+---
+
+# Phase 2: The "Data Map" (Contextual Awareness)
+
+Analytical agents fail if they don't understand the schema. We need to give Gemini a "Mental Model" of your data without sending the data itself.
+
+## Objectives
+
+- **Schema Discovery Tool:** Create a tool `get_data_dictionary` that returns column names, data types, and a few sample values.
+- **Rules Update:** Update your `.cursorrules` to instruct the agent to always check the schema before writing analysis code.
+
+---
+
+# Phase 3: The "Discovery" Prompting Strategy
+
+Analytics requires a different persona. We move from "Chatbot" to "Data Scientist."
+
+## Objectives
+
+- **Planning Loop:** Configure the agent to write a "Research Plan" first.
+  - Step 1: Identify variables.
+  - Step 2: Clean/Normalize (e.g., date formats).
+  - Step 3: Statistical test (Correlation, Regression).
+- **Visualization:** Add a "Skill" that allows the agent to generate plots using [Observable Plot](https://observablehq.com/plot/). The skill produces a self-contained HTML file embedding the chart and returns the local file path.
+
+---
+
+# Phase 4: Token Optimization & State
+
+Instead of sending every analysis result back into the main chat, we keep the data "Local-First."
+
+## Objectives
+
+- **Summarization Skill:** Ensure the run_analysis tool logic includes a step to summarize large outputs.
+- **Memory:** Implement a simple JSON-based "Fact Store" where the agent saves discovered insights (e.g., "User's peak energy is 10 AM") so it doesn't have to re-run the analysis every time.
