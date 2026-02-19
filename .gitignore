@@ -11,7 +11,7 @@ wheels/
 
 # Health database (generated)
 data/health.db
-.cursor/
+# .cursor/
 .cursorignore
 AGENTS.md
 BUGBOT.md
