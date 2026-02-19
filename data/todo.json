@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "title": "Deep Work: Architecture Design",
+    "duration_minutes": 90,
+    "energy_required": "high",
+    "preferred_time": "morning",
+    "flexible": true
+  },
+  {
+    "id": 2,
+    "title": "Email & Slack Triage",
+    "duration_minutes": 30,
+    "energy_required": "low",
+    "preferred_time": "morning",
+    "flexible": true
+  },
+  {
+    "id": 3,
+    "title": "Team Standup",
+    "duration_minutes": 15,
+    "energy_required": "low",
+    "preferred_time": "10:00",
+    "flexible": false
+  },
+  {
+    "id": 4,
+    "title": "Code Review PRs",
+    "duration_minutes": 45,
+    "energy_required": "medium",
+    "preferred_time": "afternoon",
+    "flexible": true
+  },
+  {
+    "id": 5,
+    "title": "Gym / Workout",
+    "duration_minutes": 60,
+    "energy_required": "high",
+    "preferred_time": "evening",
+    "flexible": true
+  },
+  {
+    "id": 6,
+    "title": "Read Technical Paper",
+    "duration_minutes": 45,
+    "energy_required": "medium",
+    "preferred_time": "afternoon",
+    "flexible": true
+  },
+  {
+    "id": 7,
+    "title": "Journaling & Reflection",
+    "duration_minutes": 20,
+    "energy_required": "low",
+    "preferred_time": "evening",
+    "flexible": true
+  }
+]
